@@ -16,7 +16,7 @@ from pathlib import Path
 
 from PyQt6.QtCore import QSize, Qt, QAbstractAnimation, QVariantAnimation
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QInputDialog, QLabel, QVBoxLayout, \
-    QGridLayout, QWidget
+    QHBoxLayout, QGridLayout, QWidget
 from PyQt6.QtGui import QFont, QFontDatabase, QColor, QCursor
 
 # Only needed for access to command line arguments
@@ -63,18 +63,29 @@ class MainWindow(QMainWindow):
                                  "}"
                                  )
 
-        lbl_title = QLabel("Examsoft GUI Test", self)
+        lbl_title = QLabel("Examsoft RosterScraper", self)
         lbl_title.setFont(QFont("Be Vietnam ExtraBold", 20))
-        lbl_title.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        # lbl_title.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+
+        lbl_version = QLabel(txt_version, self)
+        lbl_version.setFont(QFont("Be Vietnam SemiBold", 20))
+        lbl_version.setStyleSheet("color: #AAA;")
 
         lbl_stuff = QLabel(txt_stuff, self)
         lbl_stuff.setFont(QFont("Be Vietnam", 10))
         # lbl_stuff.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
+        # this takes the labels for title and version and puts them in a horz. box layout
+        layout_title = QHBoxLayout()
+        layout_title.addWidget(lbl_title)
+        layout_title.addWidget(lbl_version)
+
+        # this takes the horz. box layout and label for "stuff" and puts them in a vert. box layout
         layout_words = QVBoxLayout()
-        layout_words.addWidget(lbl_title)
+        layout_words.addLayout(layout_title)
         layout_words.addWidget(lbl_stuff)
         #  layout_words.setStyleSheet()
+        layout_words.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
         layout_main = QVBoxLayout()
         layout_main.addLayout(layout_words)
@@ -90,7 +101,7 @@ class MainWindow(QMainWindow):
         # Set the central widget of the Window.
         self.setCentralWidget(container)
 
-        self.setMinimumSize(QSize(400, 110))
+        self.setMinimumSize(QSize(400, 250))
 
         # Set the central widget of the Window.
         # self.setCentralWidget(btn_import)
