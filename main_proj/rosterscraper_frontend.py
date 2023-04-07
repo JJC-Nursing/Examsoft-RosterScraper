@@ -16,21 +16,57 @@ from pathlib import Path
 
 from PyQt6.QtCore import QSize, Qt, QAbstractAnimation, QVariantAnimation
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QInputDialog, QLabel, QVBoxLayout, \
-    QHBoxLayout, QGridLayout, QWidget
+    QHBoxLayout, QGridLayout, QWidget, QStackedWidget, QStackedLayout
 from PyQt6.QtGui import QFont, QFontDatabase, QColor, QCursor
 
 # Only needed for access to command line arguments
 import sys
 
 
-# Subclass QMainWindow to customize your application's main window
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
 
-        self.init_ui()
+# Subclass QWidget to customize your application's frames
+class prev_Widget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
-    def init_ui(self):
+        layout = QVBoxLayout()
+        label = QLabel("Welcome to Widget 1!")
+
+        layout.addWidget(label)
+        button = QPushButton("Switch to Widget 2")
+
+        button.clicked.connect(self.switch_widget)
+
+        layout.addWidget(button)
+        self.setLayout(layout)
+
+    def switch_widget(self):
+        # for stacked widgets, the first one needs to be max_widgets - 1 to move to the next one
+        # (it decrements backwards)
+        stacked_widget.setCurrentIndex(1)
+
+class test_Widget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        layout = QVBoxLayout()
+        label = QLabel("Welcome to Widget 2!")
+
+        layout.addWidget(label)
+        button = QPushButton("Switch to Widget 3")
+
+        button.clicked.connect(self.switch_widget)
+
+        layout.addWidget(button)
+        self.setLayout(layout)
+
+    def switch_widget(self):
+        stacked_widget.setCurrentIndex(0)
+
+
+class init_Widget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
         fonts_name = [QFontDatabase.addApplicationFont("fonts/BeVietnam-ExtraBold.ttf"),
                       QFontDatabase.addApplicationFont("fonts/BeVietnam-Regular.ttf"),
@@ -91,15 +127,25 @@ class MainWindow(QMainWindow):
         layout_main.addLayout(layout_words)
         layout_main.addWidget(btn_import)
 
+        # layout_main.setStyle
+
         container = QWidget()
         container.setStyleSheet(".QWidget "
                                 "{background: "
                                 "qlineargradient(x1:0 y1:1, x2:0.5 y2:0, stop:0 #23002A, stop:1 #00066A);}"
                                 "* {color: #FFFFFF};")
         container.setLayout(layout_main)
+        layout_fin = QStackedLayout()
+        layout_fin.addWidget(container)
+
+        # self.setStyleSheet("{background: "
+        #                         "qlineargradient(x1:0 y1:1, x2:0.5 y2:0, stop:0 #23002A, stop:1 #00066A);}"
+        #                         "* {color: #FFFFFF};")
+        self.setLayout(layout_fin)
+
 
         # Set the central widget of the Window.
-        self.setCentralWidget(container)
+        # self.setCentralWidget(container)
 
         self.setMinimumSize(QSize(400, 250))
 
@@ -117,18 +163,26 @@ class MainWindow(QMainWindow):
                 data = f.read()
                 self.textEdit.setText(data)
 
+    def switch_widget(self):
+        stacked_widget.setCurrentIndex(2)
 
-# You need one (and only one) QApplication instance per application.
-# Pass in sys.argv to allow command line arguments for your app.
-# If you know you won't use command line arguments QApplication([]) works too.
-app = QApplication(sys.argv)
 
-# Create a Qt widget, which will be our window.
-window = MainWindow()
-window.show()  # IMPORTANT!!!!! Windows are hidden by default.
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
 
-# Start the event loop.
-app.exec()
+    # Create the QStackedWidget and add the two widgets to it
+    stacked_widget = QStackedWidget()
+    widget1 = init_Widget()
+    widget1_1 = test_Widget()
+    widget2 = prev_Widget()
+    stacked_widget.addWidget(widget1)
+    stacked_widget.addWidget(widget1_1)
+    stacked_widget.addWidget(widget2)
 
-# Your application won't reach here until you exit and the event
-# loop has stopped.
+    # Show the first widget (setCurrentIndex = MAX amt. of widgets, last widget is 0)
+    stacked_widget.setCurrentIndex(2)
+    stacked_widget.show()
+
+    # setCentralWidget(stacked_widget)
+
+    sys.exit(app.exec())
