@@ -16,7 +16,7 @@ from pathlib import Path
 
 from PyQt6.QtCore import QSize, Qt, QAbstractAnimation, QVariantAnimation
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QInputDialog, QLabel, QVBoxLayout, \
-    QHBoxLayout, QGridLayout, QWidget, QStackedWidget, QStackedLayout
+    QHBoxLayout, QGridLayout, QWidget, QStackedWidget, QStackedLayout, QProgressBar
 from PyQt6.QtGui import QFont, QFontDatabase, QColor, QCursor
 
 # Only needed for access to command line arguments
@@ -82,10 +82,12 @@ class init_Widget(QWidget):
         # label.setFont(QFont("Be Vietnam ExtraBold", 20))
         # label.move(50, 50)
 
-        self.setWindowTitle("RosterScraper Start Screen")
+        stacked_widget.setWindowTitle("RosterScraper Start Screen")
+
+
         btn_import = QPushButton("import location")
         # btn_import.setCheckable(True)
-        btn_import.setFont(QFont("Be Vietnam", 12))
+        btn_import.setFont(QFont("Be Vietnam", 14))
         btn_import.released.connect(self.import_location)
         btn_import.setStyleSheet(".QPushButton{"
                                  "background: qlineargradient(spread:pad, x1:0 y1:0, x2:1 y2:0, "
@@ -100,43 +102,45 @@ class init_Widget(QWidget):
                                  )
 
         lbl_title = QLabel("Examsoft RosterScraper", self)
-        lbl_title.setFont(QFont("Be Vietnam ExtraBold", 20))
+        lbl_title.setFont(QFont("Be Vietnam ExtraBold", 40))
+        lbl_title.setStyleSheet("padding-left: 1px; padding-right: 0px;")
         # lbl_title.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
         lbl_version = QLabel(txt_version, self)
-        lbl_version.setFont(QFont("Be Vietnam SemiBold", 20))
+        lbl_version.setFont(QFont("Be Vietnam", 40))
         lbl_version.setStyleSheet("color: #AAA;")
+        # lbl_version.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
         lbl_stuff = QLabel(txt_stuff, self)
-        lbl_stuff.setFont(QFont("Be Vietnam", 10))
+        lbl_stuff.setFont(QFont("Be Vietnam", 12))
+        lbl_stuff.setStyleSheet("padding: 13px;")
         # lbl_stuff.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
         # this takes the labels for title and version and puts them in a horz. box layout
         layout_title = QHBoxLayout()
         layout_title.addWidget(lbl_title)
         layout_title.addWidget(lbl_version)
+        layout_title.setSpacing(0)
 
         # this takes the horz. box layout and label for "stuff" and puts them in a vert. box layout
         layout_words = QVBoxLayout()
         layout_words.addLayout(layout_title)
         layout_words.addWidget(lbl_stuff)
-        #  layout_words.setStyleSheet()
         layout_words.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
         layout_main = QVBoxLayout()
         layout_main.addLayout(layout_words)
         layout_main.addWidget(btn_import)
 
-        # layout_main.setStyle
-
-        container = QWidget()
-        container.setStyleSheet(".QWidget "
+        widget_bkg = QWidget()
+        widget_bkg.setStyleSheet(".QWidget "
                                 "{background: "
                                 "qlineargradient(x1:0 y1:1, x2:0.5 y2:0, stop:0 #23002A, stop:1 #00066A);}"
-                                "* {color: #FFFFFF};")
-        container.setLayout(layout_main)
+                                "* {color: #FFFFFF;}"
+                                 )
+        widget_bkg.setLayout(layout_main)
         layout_fin = QStackedLayout()
-        layout_fin.addWidget(container)
+        layout_fin.addWidget(widget_bkg)
 
         # self.setStyleSheet("{background: "
         #                         "qlineargradient(x1:0 y1:1, x2:0.5 y2:0, stop:0 #23002A, stop:1 #00066A);}"
@@ -145,7 +149,7 @@ class init_Widget(QWidget):
 
 
         # Set the central widget of the Window.
-        # self.setCentralWidget(container)
+        # self.setCentralWidget(widget_bkg)
 
         self.setMinimumSize(QSize(400, 250))
 
@@ -182,6 +186,9 @@ if __name__ == '__main__':
     # Show the first widget (setCurrentIndex = MAX amt. of widgets, last widget is 0)
     stacked_widget.setCurrentIndex(2)
     stacked_widget.show()
+
+    # if stacked_widget.currentWidget() == 0:
+    #     stacked_widget.setWindowTitle("RosterScraper Start Screen")
 
     # setCentralWidget(stacked_widget)
 
