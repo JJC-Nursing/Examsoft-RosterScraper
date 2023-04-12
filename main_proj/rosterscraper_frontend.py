@@ -1,7 +1,7 @@
 # future updates: a date / time appender to file export (easy way to timestamp)
 #                 a remembrance of where the program last saved and what its name was last (check for overwriting)
 
-txt_version = "v1.1"
+txt_version = "v2.1"
 
 txt_updatedate = "03.30.2023"
 
@@ -10,61 +10,23 @@ txt_stuff = "script orig. written by Jefferson Cherrington" + "\n\n" + \
             "(all scraping is done offline)" + "\n\n" + \
             "last updated: " + txt_updatedate + "\n"
 
+arr_titles = ["Start Screen", "Import File", "Export Folder", "Export Filename", "Preview Output"]
+
 import sys
 import rosterscraper_backend as esv
 from pathlib import Path
 
 from PyQt6.QtCore import QSize, Qt, QAbstractAnimation, QVariantAnimation
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QInputDialog, QLabel, QVBoxLayout, \
-    QHBoxLayout, QGridLayout, QWidget, QStackedWidget, QStackedLayout, QProgressBar
-from PyQt6.QtGui import QFont, QFontDatabase, QColor, QCursor
+    QHBoxLayout, QGridLayout, QWidget, QStackedWidget, QStackedLayout, QProgressBar, QLineEdit
+from PyQt6.QtGui import QFont, QFontDatabase, QColor, QCursor, QIcon
 
 # Only needed for access to command line arguments
 import sys
 
 
-
 # Subclass QWidget to customize your application's frames
-class prev_Widget(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        layout = QVBoxLayout()
-        label = QLabel("Welcome to Widget 1!")
-
-        layout.addWidget(label)
-        button = QPushButton("Switch to Widget 2")
-
-        button.clicked.connect(self.switch_widget)
-
-        layout.addWidget(button)
-        self.setLayout(layout)
-
-    def switch_widget(self):
-        # for stacked widgets, the first one needs to be max_widgets - 1 to move to the next one
-        # (it decrements backwards)
-        stacked_widget.setCurrentIndex(1)
-
-class test_Widget(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        layout = QVBoxLayout()
-        label = QLabel("Welcome to Widget 2!")
-
-        layout.addWidget(label)
-        button = QPushButton("Switch to Widget 3")
-
-        button.clicked.connect(self.switch_widget)
-
-        layout.addWidget(button)
-        self.setLayout(layout)
-
-    def switch_widget(self):
-        stacked_widget.setCurrentIndex(0)
-
-
-class init_Widget(QWidget):
+class startscreen_Widget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -82,24 +44,23 @@ class init_Widget(QWidget):
         # label.setFont(QFont("Be Vietnam ExtraBold", 20))
         # label.move(50, 50)
 
-        stacked_widget.setWindowTitle("RosterScraper Start Screen")
 
 
-        btn_import = QPushButton("import location")
-        # btn_import.setCheckable(True)
-        btn_import.setFont(QFont("Be Vietnam", 14))
-        btn_import.released.connect(self.import_location)
-        btn_import.setStyleSheet(".QPushButton{"
-                                 "background: qlineargradient(spread:pad, x1:0 y1:0, x2:1 y2:0, "
-                                 "stop:0 rgba(0, 0, 0, 20), stop:1 rgba(255, 255, 255, 60));"
-                                 "border: 2px solid white; border-radius: 8.5px;"
-                                 "padding: 5px;"
-                                 "}"
-                                 ".QPushButton:hover{"
-                                 "background: rgba(0, 165, 180, 70);"
+        btn_continue = QPushButton("continue ->")
+        btn_continue.clicked.connect(self.switch_widget)
+        btn_continue.setFont(QFont("Be Vietnam", 14))
+        btn_continue.setStyleSheet(".QPushButton{"
+                                   "background: qlineargradient(spread:pad, x1:0 y1:0, x2:1 y2:0, "
+                                   "stop:0 rgba(0, 0, 0, 20), stop:1 rgba(255, 255, 255, 60));"
+                                   "border: 2px solid white; border-radius: 8.5px;"
+                                   "padding: 5px;"
+                                   "}"
+                                   ".QPushButton:hover{"
+                                   "background: rgba(0, 165, 180, 70);"
 
-                                 "}"
-                                 )
+                                   "}"
+                                   )
+
 
         lbl_title = QLabel("Examsoft RosterScraper", self)
         lbl_title.setFont(QFont("Be Vietnam ExtraBold", 40))
@@ -130,15 +91,18 @@ class init_Widget(QWidget):
 
         layout_main = QVBoxLayout()
         layout_main.addLayout(layout_words)
-        layout_main.addWidget(btn_import)
+
+        layout_main.addWidget(btn_continue)
 
         widget_bkg = QWidget()
         widget_bkg.setStyleSheet(".QWidget "
-                                "{background: "
-                                "qlineargradient(x1:0 y1:1, x2:0.5 y2:0, stop:0 #23002A, stop:1 #00066A);}"
-                                "* {color: #FFFFFF;}"
+                                 "{background: "
+                                 "qlineargradient(x1:0 y1:1, x2:0.5 y2:0, stop:0 #23002A, stop:1 #00066A);}"
+                                 "* {color: #FFFFFF;}"
                                  )
         widget_bkg.setLayout(layout_main)
+
+
         layout_fin = QStackedLayout()
         layout_fin.addWidget(widget_bkg)
 
@@ -147,6 +111,147 @@ class init_Widget(QWidget):
         #                         "* {color: #FFFFFF};")
         self.setLayout(layout_fin)
 
+        # Set the central widget of the Window.
+        # self.setCentralWidget(widget_bkg)
+
+        self.setMinimumSize(QSize(400, 250))
+
+        # Set the central widget of the Window.
+        # self.setCentralWidget(btn_import)
+
+    def switch_widget(self):
+        # for stacked widgets, the first one needs to be max_widgets - 1 to move to the next one
+        # (it decrements backwards)
+        stacked_widget.setCurrentIndex(1)
+        stacked_widget.setWindowTitle("RosterScraper: " + arr_titles[1])
+
+
+class import_loc_Widget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+
+        fonts_name = [QFontDatabase.addApplicationFont("fonts/BeVietnam-ExtraBold.ttf"),
+                      QFontDatabase.addApplicationFont("fonts/BeVietnam-Regular.ttf"),
+                      QFontDatabase.addApplicationFont("fonts/BeVietnam-SemiBold.ttf")]
+        for x in fonts_name:
+            if x < 0:
+                print("Error")
+
+        # stacked_widget.setWindowTitle("RosterScraper: Import Screen")
+
+        btn_continue = QPushButton("continue ->")
+        btn_continue.clicked.connect(self.switch_widget)
+        btn_continue.setFont(QFont("Be Vietnam", 14))
+        btn_continue.setStyleSheet(".QPushButton{"
+                                   "background: qlineargradient(spread:pad, x1:0 y1:0, x2:1 y2:0, "
+                                   "stop:0 rgba(0, 0, 0, 20), stop:1 rgba(255, 255, 255, 60));"
+                                   "border: 2px solid white; border-radius: 8.5px;"
+                                   "padding: 5px;"
+                                   "}"
+                                   ".QPushButton:hover{"
+                                   "background: rgba(0, 165, 180, 70);"
+    
+                                   "}"
+                                   )
+
+        btn_import = QPushButton("")
+        # btn_import.setCheckable(True)
+        btn_import.setIcon(QIcon("assets/search_icon.png"))
+        # btn_import.setFont(QFont("Be Vietnam", 50))
+        btn_import.setIconSize(QSize(30, 30))
+        btn_import.released.connect(self.import_location)
+        btn_import.setStyleSheet(".QPushButton{"
+                                 "background: qlineargradient(spread:pad, x1:0 y1:0, x2:1 y2:0, "
+                                 "stop:0 rgba(0, 0, 0, 20), stop:1 rgba(255, 255, 255, 60));"
+                                 "border: 2px solid white; border-radius: 8.5px;"
+                                 "padding: 5px;"
+                                 "}"
+                                 ".QPushButton:hover{"
+                                 "background: rgba(0, 165, 180, 70);"
+    
+                                 "}"
+                                 )
+
+        lbl_title = QLabel("Examsoft RosterScraper", self)
+        lbl_title.setFont(QFont("Be Vietnam ExtraBold", 20))
+        lbl_title.setStyleSheet("padding-left: 1px; padding-right: 0px;")
+        # lbl_title.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+
+        lbl_version = QLabel(txt_version, self)
+        lbl_version.setFont(QFont("Be Vietnam", 20))
+        lbl_version.setStyleSheet("color: #AAA;")
+        # lbl_version.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        lbl_stuff = QLabel("import location (HTML):", self)
+        lbl_stuff.setFont(QFont("Be Vietnam", 20))
+        # lbl_stuff.setStyleSheet("padding: 5px;")
+        lbl_stuff.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+
+        self.txtbox_location = QLineEdit("text goes here.")
+        self.txtbox_location.setFont(QFont("Be Vietnam", 14))
+        self.txtbox_location.setStyleSheet(".QLineEdit{"
+                                 "background: qlineargradient(spread:pad, x1:0 y1:0, x2:1 y2:0, "
+                                 "stop:0 rgba(100, 100, 100, 60), stop:1 rgba(255, 255, 255, 90));"
+                                 "color: #FFF; border: 2px solid white; border-radius: 8.5px;"
+                                 "padding: 5px;"
+                                 "}"
+                                 ".QLineEdit:hover{"
+                                 "background: #B2B3B7; color: #000;}"
+                                 ".QLineEdit:focus{"
+                                 "background: #B2B3B7; color: #000;}"
+                                 )
+        self.txtbox_location.setAlignment(Qt.AlignmentFlag.AlignRight)
+        # this takes the labels for title and version and puts them in a horz. box layout
+        layout_title = QHBoxLayout()
+        layout_title.addWidget(lbl_title)
+        layout_title.addWidget(lbl_version)
+        layout_title.setSpacing(0)
+
+        # this takes the horz. box layout and label for "stuff" and puts them in a vert. box layout
+        layout_words = QVBoxLayout()
+        layout_words.addLayout(layout_title)
+
+        layout_words.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+
+        layout_location = QHBoxLayout()
+        layout_location.addWidget(self.txtbox_location)
+        layout_location.addWidget(btn_import)
+        # layout_location.setContentsMargins(0, 0, 0, 50)
+
+        layout_center = QGridLayout()
+        layout_center.addWidget(lbl_stuff, 0, 0)
+        layout_center.addLayout(layout_location, 1, 0)
+        layout_center.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignTop)
+
+
+        layout_main = QVBoxLayout()
+        layout_main.addLayout(layout_words)
+        # layout_main.addWidget(lbl_stuff)
+        layout_main.addLayout(layout_center)
+        layout_main.addWidget(btn_continue)
+
+        widget_bkg = QWidget()
+        widget_bkg.setStyleSheet(".QWidget "
+                                 "{background: "
+                                 "qlineargradient(x1:0 y1:1, x2:0.5 y2:0, stop:0 #23002A, stop:1 #00066A);}"
+                                 "* {color: #FFFFFF;}"
+                                 )
+
+        widget_bkg.setWindowTitle("")
+        widget_bkg.setWindowTitle("RosterScraper: Import Screen")
+
+
+        widget_bkg.setLayout(layout_main)
+        layout_fin = QStackedLayout()
+        layout_fin.addWidget(widget_bkg)
+
+
+
+        # self.setStyleSheet("{background: "
+        #                         "qlineargradient(x1:0 y1:1, x2:0.5 y2:0, stop:0 #23002A, stop:1 #00066A);}"
+        #                         "* {color: #FFFFFF};")
+        self.setLayout(layout_fin)
 
         # Set the central widget of the Window.
         # self.setCentralWidget(widget_bkg)
@@ -161,14 +266,164 @@ class init_Widget(QWidget):
         f_name = QFileDialog.getOpenFileName(self, 'Open file:', home_dir)
 
         if f_name[0]:
-            f = open(f_name[0], 'r')
+            # f = open(f_name[0], 'r')
+            #
+            # with f:
+            #     data = f.read()
+            #     self.txtbox_location.setText(data)
+            self.txtbox_location.setText(f_name[0])
 
-            with f:
-                data = f.read()
-                self.textEdit.setText(data)
+    def switch_widget(self):
+        stacked_widget.setCurrentIndex(0)
+        stacked_widget.setWindowTitle("RosterScraper: " + arr_titles[2])
+
+
+class exp_tofolder_Widget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        fonts_name = [QFontDatabase.addApplicationFont("fonts/BeVietnam-ExtraBold.ttf"),
+                      QFontDatabase.addApplicationFont("fonts/BeVietnam-Regular.ttf"),
+                      QFontDatabase.addApplicationFont("fonts/BeVietnam-SemiBold.ttf")]
+        for x in fonts_name:
+            if x < 0:
+                print("Error")
+
+        # stacked_widget.setWindowTitle("RosterScraper: Import Screen")
+
+        btn_continue = QPushButton("continue ->")
+        btn_continue.clicked.connect(self.switch_widget)
+        btn_continue.setFont(QFont("Be Vietnam", 14))
+        btn_continue.setStyleSheet(".QPushButton{"
+                                   "background: qlineargradient(spread:pad, x1:0 y1:0, x2:1 y2:0, "
+                                   "stop:0 rgba(0, 0, 0, 20), stop:1 rgba(255, 255, 255, 60));"
+                                   "border: 2px solid white; border-radius: 8.5px;"
+                                   "padding: 5px;"
+                                   "}"
+                                   ".QPushButton:hover{"
+                                   "background: rgba(0, 165, 180, 70);"
+
+                                   "}"
+                                   )
+
+        btn_import = QPushButton("")
+        # btn_import.setCheckable(True)
+        btn_import.setIcon(QIcon("assets/search_icon.png"))
+        # btn_import.setFont(QFont("Be Vietnam", 50))
+        btn_import.setIconSize(QSize(30, 30))
+        btn_import.released.connect(self.export_location)
+        btn_import.setStyleSheet(".QPushButton{"
+                                 "background: qlineargradient(spread:pad, x1:0 y1:0, x2:1 y2:0, "
+                                 "stop:0 rgba(0, 0, 0, 20), stop:1 rgba(255, 255, 255, 60));"
+                                 "border: 2px solid white; border-radius: 8.5px;"
+                                 "padding: 5px;"
+                                 "}"
+                                 ".QPushButton:hover{"
+                                 "background: rgba(0, 165, 180, 70);"
+
+                                 "}"
+                                 )
+
+        lbl_title = QLabel("Examsoft RosterScraper", self)
+        lbl_title.setFont(QFont("Be Vietnam ExtraBold", 20))
+        lbl_title.setStyleSheet("padding-left: 1px; padding-right: 0px;")
+        # lbl_title.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+
+        lbl_version = QLabel(txt_version, self)
+        lbl_version.setFont(QFont("Be Vietnam", 20))
+        lbl_version.setStyleSheet("color: #AAA;")
+        # lbl_version.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        lbl_stuff = QLabel("export folder (CSV):", self)
+        lbl_stuff.setFont(QFont("Be Vietnam", 20))
+        # lbl_stuff.setStyleSheet("padding: 5px;")
+        lbl_stuff.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+
+        self.txtbox_location = QLineEdit("text goes here.")
+        self.txtbox_location.setFont(QFont("Be Vietnam", 14))
+        self.txtbox_location.setStyleSheet(".QLineEdit{"
+                                           "background: qlineargradient(spread:pad, x1:0 y1:0, x2:1 y2:0, "
+                                           "stop:0 rgba(100, 100, 100, 60), stop:1 rgba(255, 255, 255, 90));"
+                                           "color: #FFF; border: 2px solid white; border-radius: 8.5px;"
+                                           "padding: 5px;"
+                                           "}"
+                                           ".QLineEdit:hover{"
+                                           "background: #B2B3B7; color: #000;}"
+                                           ".QLineEdit:focus{"
+                                           "background: #B2B3B7; color: #000;}"
+                                           )
+        self.txtbox_location.setAlignment(Qt.AlignmentFlag.AlignRight)
+        # this takes the labels for title and version and puts them in a horz. box layout
+        layout_title = QHBoxLayout()
+        layout_title.addWidget(lbl_title)
+        layout_title.addWidget(lbl_version)
+        layout_title.setSpacing(0)
+
+        # this takes the horz. box layout and label for "stuff" and puts them in a vert. box layout
+        layout_words = QVBoxLayout()
+        layout_words.addLayout(layout_title)
+
+        layout_words.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+
+        layout_location = QHBoxLayout()
+        layout_location.addWidget(self.txtbox_location)
+        layout_location.addWidget(btn_import)
+        # layout_location.setContentsMargins(0, 0, 0, 50)
+
+        layout_center = QGridLayout()
+        layout_center.addWidget(lbl_stuff, 0, 0)
+        layout_center.addLayout(layout_location, 1, 0)
+        layout_center.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignTop)
+
+        layout_main = QVBoxLayout()
+        layout_main.addLayout(layout_words)
+        # layout_main.addWidget(lbl_stuff)
+        layout_main.addLayout(layout_center)
+        layout_main.addLayout(layout_location)
+        layout_main.addWidget(btn_continue)
+
+        widget_bkg = QWidget()
+        widget_bkg.setStyleSheet(".QWidget "
+                                 "{background: "
+                                 "qlineargradient(x1:0 y1:1, x2:0.5 y2:0, stop:0 #23002A, stop:1 #00066A);}"
+                                 "* {color: #FFFFFF;}"
+                                 )
+
+        widget_bkg.setWindowTitle("")
+        widget_bkg.setWindowTitle("RosterScraper: Import Screen")
+
+        widget_bkg.setLayout(layout_main)
+        layout_fin = QStackedLayout()
+        layout_fin.addWidget(widget_bkg)
+
+        # self.setStyleSheet("{background: "
+        #                         "qlineargradient(x1:0 y1:1, x2:0.5 y2:0, stop:0 #23002A, stop:1 #00066A);}"
+        #                         "* {color: #FFFFFF};")
+        self.setLayout(layout_fin)
+
+        # Set the central widget of the Window.
+        # self.setCentralWidget(widget_bkg)
+
+        self.setMinimumSize(QSize(400, 250))
+
+        # Set the central widget of the Window.
+        # self.setCentralWidget(btn_import)
+
+    def export_location(self):
+        home_dir = str(Path.home())
+        f_name = QFileDialog.getExistingDirectory(self, 'Export to folder:', home_dir)
+
+        if f_name:
+            # f = open(f_name[0], 'r')
+            #
+            # with f:
+            #     data = f.read()
+            #     self.txtbox_location.setText(data)
+            self.txtbox_location.setText(f_name)
 
     def switch_widget(self):
         stacked_widget.setCurrentIndex(2)
+        stacked_widget.setWindowTitle("RosterScraper: " + arr_titles[0])
 
 
 if __name__ == '__main__':
@@ -176,9 +431,9 @@ if __name__ == '__main__':
 
     # Create the QStackedWidget and add the two widgets to it
     stacked_widget = QStackedWidget()
-    widget1 = init_Widget()
-    widget1_1 = test_Widget()
-    widget2 = prev_Widget()
+    widget1 = exp_tofolder_Widget()
+    widget1_1 = import_loc_Widget()
+    widget2 = startscreen_Widget()
     stacked_widget.addWidget(widget1)
     stacked_widget.addWidget(widget1_1)
     stacked_widget.addWidget(widget2)
