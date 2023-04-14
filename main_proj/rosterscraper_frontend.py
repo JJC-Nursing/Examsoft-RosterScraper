@@ -548,7 +548,7 @@ class exp_name_Widget(QWidget):
                                            ".QLineEdit:focus{"
                                            "background: #B2B3B7; color: #000;}"
                                            )
-        self.txtbox_location.setAlignment(Qt.AlignmentFlag.AlignRight)
+        self.txtbox_location.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         # this takes the labels for title and version and puts them in a horz. box layout
         layout_title = QHBoxLayout()
         layout_title.addWidget(lbl_title)
@@ -635,7 +635,7 @@ class preview_results_Widget(QWidget):
 
         # stacked_widget.setWindowTitle("RosterScraper: Import Screen")
 
-        btn_continue = QPushButton("redo program ->")
+        btn_continue = QPushButton("redo program ⟳")
         btn_continue.clicked.connect(self.switch_widget)
         btn_continue.setFont(QFont("Be Vietnam", 14))
         btn_continue.setStyleSheet(".QPushButton{"
@@ -660,7 +660,7 @@ class preview_results_Widget(QWidget):
                                    "padding: 5px;"
                                    "}"
                                    ".QPushButton:hover{"
-                                   "background: rgba(255, 15, 20, 95);"
+                                   "background: rgb(171, 7, 27);"
 
                                    "}"
                                    )
