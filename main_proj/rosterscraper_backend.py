@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
-# Jefferson A. Cherrington - last update: 01-30-23
-# Examsoft Offline Roster Scraper v1.1, originally built for Joliet Junior College's Dept of Nursing
+# Jefferson A. Cherrington - last update: 04-17-23
+# Examsoft Offline Roster Scraper v2.0, originally built for Joliet Junior College's Dept of Nursing
 # Desc: converts already downloaded HTML file into CSV file,
 # \\    because Examsoft does not currently have a simple export to CSV button.
 
-# this will be used for testing
-import PySimpleGUIQt as sGUI
+# # this will be used for testing
+# import PySimpleGUIQt as sGUI
 
-import sys
+# import sys
 
 # Beautiful Soup is necessary to scan this entire HTML file
 # that was downloaded offline due to Examsoft's stance on scrapers.
@@ -22,6 +22,7 @@ class OfflineRS:
         self.output_n = ""
         self.num_of_students = "X"
         self.full_list = "not loaded yet"
+        self.e_num = ""
 
     # getters defined below
     def get_inp_name(self):  # unlikely call
@@ -67,7 +68,8 @@ class OfflineRS:
             soup = bs4.BeautifulSoup(fp, 'html.parser')
 
         # I am using this to shorten my search.
-        # knowing that every piece of data is hidden inside a "grid row" styled HTML div, I use bs4 to find the HTML class
+        # knowing that every piece of data is hidden inside a "grid row" styled HTML div,
+        # I use bs4 to find the HTML class
         bowl = soup.find_all("div", class_="grid-row__content grid-row__selectable")
 
         # cute little counter that tells me what my final count should be
@@ -168,7 +170,7 @@ class OfflineRS:
                 stuLabUser.append(full_record[31])
                 stuNonSec.append(full_record[37])
                 stuTimeMult.append(full_record[40])
-            # elif full_record[37] == "150%":                               # edge case: student HAS TimeMult, IS Lab User
+            # elif full_record[37] == "150%":        # edge case: student HAS TimeMult, IS Lab User
             #       stuEmail.append(full_record[18])
             #       stuInviteDate.append(full_record[23])
             #       stuStatusInvite.append("")
@@ -195,9 +197,17 @@ class OfflineRS:
         full_list = ""
 
         for i in range(len(bowl)):
+
+            self.e_num = ""
+
+            if i == 0:
+                self.e_num = "Entry #1:\n"
+            else:
+                self.e_num = "\n\nEntry #{}:\n".format(str(i + 1))
+
             full_list = full_list \
-                        + "\n\nEntry #{}:\n" \
-                          "\tLast Name: {}\n" \
+                        + self.e_num \
+                        + "\tLast Name: {}\n" \
                           "\tFirst Name: {}\n" \
                           "\tStudent ID: {}\n" \
                           "\tStatus [Active]: {}\n" \
@@ -208,7 +218,7 @@ class OfflineRS:
                           "\tLab User: {}\n" \
                           "\tNon-Secure User: {}\n" \
                           "\tTime Multiplier: {}\n".format(
-                str(i + 1), lastName[i], firstName[i], stuID[i], stuStatusCurrent[i], stuEmail[i],
+                lastName[i], firstName[i], stuID[i], stuStatusCurrent[i], stuEmail[i],
                 stuInviteDate[i], stuLastLogin[i], stuLastReg[i], stuLabUser[i], stuNonSec[i], stuTimeMult[i])
 
             print("\n\nEntry #{}:\n"
@@ -227,10 +237,6 @@ class OfflineRS:
                 stuInviteDate[i], stuLastLogin[i], stuLastReg[i], stuLabUser[i], stuNonSec[i], stuTimeMult[i]))
 
         self.set_all_stu(full_list)
-        # TODO: remove this debug.
-        print("This is the full_list of students being printed out after set_num_stu was called: " + self.get_all_stu())
-
-        # sGUI.popup_scrolled(full_list, title=how_many_students)
 
         # this is a RAW dump, delimited by semicolons.
         # Column Name isn't included as edge cases are discovered in this mess
@@ -266,26 +272,26 @@ class OfflineRS:
         return True
 
 
-def my_gui_creator():
-    sGUI.theme('Dark2')
-
-    if len(sys.argv) == 1:
-        event, values = sGUI.Window('Import Examsoft HTML File',
-                                    [[sGUI.Text('Document to open')],
-                                     [sGUI.In(), sGUI.FileBrowse()],
-                                     [sGUI.Open(), sGUI.Cancel()]]).read(close=True)
-        f_name = values[0]
-    else:
-        f_name = sys.argv[1]
-
-    if not f_name:
-        sGUI.popup_error("Cancelling: no filename supplied.", title="Program Exiting Now.")
-        raise SystemExit("Cancelling: no filename supplied")
-    else:
-        sGUI.popup('The filename you chose was: ', f_name)
-
-    output_place = sGUI.popup_get_folder("Output Folder for CSV's:")
-    output_name = sGUI.popup_get_text("Name your CSV's:")
+# def my_gui_creator():
+    # sGUI.theme('Dark2')
+    #
+    # if len(sys.argv) == 1:
+    #     event, values = sGUI.Window('Import Examsoft HTML File',
+    #                                 [[sGUI.Text('Document to open')],
+    #                                  [sGUI.In(), sGUI.FileBrowse()],
+    #                                  [sGUI.Open(), sGUI.Cancel()]]).read(close=True)
+    #     f_name = values[0]
+    # else:
+    #     f_name = sys.argv[1]
+    #
+    # if not f_name:
+    #     sGUI.popup_error("Cancelling: no filename supplied.", title="Program Exiting Now.")
+    #     raise SystemExit("Cancelling: no filename supplied")
+    # else:
+    #     sGUI.popup('The filename you chose was: ', f_name)
+    #
+    # output_place = sGUI.popup_get_folder("Output Folder for CSV's:")
+    # output_name = sGUI.popup_get_text("Name your CSV's:")
 
     # run_scraper(f_name, output_place, output_name)
 
