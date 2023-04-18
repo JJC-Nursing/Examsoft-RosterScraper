@@ -622,7 +622,7 @@ class preview_results_Widget(QWidget):
         lbl_version.setStyleSheet("color: #AAA;")
         # lbl_version.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
-        lbl_stuff = QLabel(str(obj.get_num_stu()) + " students loaded:", self)
+        lbl_stuff = QLabel(obj.get_num_stu() + " students loaded:", self)
         lbl_stuff.setFont(QFont("Be Vietnam", 20))
         # lbl_stuff.setStyleSheet("padding: 5px;")
         lbl_stuff.setAlignment(Qt.AlignmentFlag.AlignHCenter)

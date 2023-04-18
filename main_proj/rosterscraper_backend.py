@@ -20,8 +20,8 @@ class OfflineRS:
         self.f_name = ""
         self.output_f = ""
         self.output_n = ""
-        self.num_of_students = 0
-        self.full_list = ""
+        self.num_of_students = "X"
+        self.full_list = "not loaded yet"
 
     # getters defined below
     def get_inp_name(self):  # unlikely call
@@ -75,6 +75,8 @@ class OfflineRS:
         print(how_many_students)
 
         self.set_num_stu(how_many_students)
+        # TODO: remove this debug.
+        print("This is the number of students being printed out after set_num_stu was called: " + self.get_num_stu())
 
         # initializes every array for the named "columns" of future data
         lastName = []
@@ -225,8 +227,10 @@ class OfflineRS:
                 stuInviteDate[i], stuLastLogin[i], stuLastReg[i], stuLabUser[i], stuNonSec[i], stuTimeMult[i]))
 
         self.set_all_stu(full_list)
+        # TODO: remove this debug.
+        print("This is the full_list of students being printed out after set_num_stu was called: " + self.get_all_stu())
 
-        sGUI.popup_scrolled(full_list, title=how_many_students)
+        # sGUI.popup_scrolled(full_list, title=how_many_students)
 
         # this is a RAW dump, delimited by semicolons.
         # Column Name isn't included as edge cases are discovered in this mess
@@ -240,7 +244,7 @@ class OfflineRS:
         print("Raw File has been successfully written.")
 
         # TODO: replace this sGUI with a QT variant.
-        sGUI.popup_ok("Raw File has been successfully written.")
+        # sGUI.popup_ok("Raw File has been successfully written.")
 
         # this is the proper export, delimited by semicolons.
         # Reusing mass_record to avoid having to touch a bs4 obj unnecessarily (bowl)
@@ -257,7 +261,9 @@ class OfflineRS:
         print("Good File has been successfully written.")
 
         # TODO: replace this sGUI with a QT variant.
-        sGUI.popup_ok("Good File has been successfully written.")
+        # sGUI.popup_ok("Good File has been successfully written.")
+
+        return True
 
 
 def my_gui_creator():
