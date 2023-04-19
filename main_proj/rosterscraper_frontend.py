@@ -8,17 +8,19 @@
 # future updates: a date / time appender to file export (easy way to timestamp)
 #                 a remembrance of where the program last saved and what its name was last (check for overwriting)
 
-# import sys
-import rosterscraper_backend as esv
+# Only needed for access to command line arguments
+import os
+import sys
 from pathlib import Path
 
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog, QInputDialog, QLabel, QVBoxLayout, \
+from PyQt6.QtGui import QFont, QFontDatabase, QIcon, QShowEvent
+from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog, QLabel, QVBoxLayout, \
     QHBoxLayout, QGridLayout, QWidget, QStackedWidget, QStackedLayout, QLineEdit, QTextEdit
-from PyQt6.QtGui import QFont, QFontDatabase, QColor, QCursor, QIcon, QShowEvent
 
-# Only needed for access to command line arguments
-import sys
+import rosterscraper_backend as esv
+
+basedir = os.path.dirname(__file__)
 
 obj = esv.OfflineRS()
 
@@ -85,6 +87,8 @@ sty_txtbox2 = ".QTextEdit{"\
                ".QTextEdit:focus{"\
                "background: #B2B3B7; color: #000;}"
 
+sty_ico_import = (os.path.join(basedir, "assets", "search_icon.png"))
+
 
 # Subclass QWidget to customize your application's frames
 class startscreen_Widget(QWidget):
@@ -94,11 +98,12 @@ class startscreen_Widget(QWidget):
         btn_continue = QPushButton("continue ->")
         btn_continue.clicked.connect(self.switch_widget)
         btn_continue.setFont(QFont("Be Vietnam", 14))
+
         btn_continue.setStyleSheet(sty_btn_continue)
         btn_continue.setCursor(Qt.CursorShape.PointingHandCursor)
 
         lbl_title = QLabel("Examsoft RosterScraper", self)
-        lbl_title.setFont(QFont("Be Vietnam ExtraBold", 40))
+        lbl_title.setFont(QFont("Be Vietnam [ExtraBold]", 40, 800))
         lbl_title.setStyleSheet("padding-left: 1px; padding-right: 0px;")
 
         lbl_version = QLabel(txt_version, self)
@@ -156,14 +161,14 @@ class import_loc_Widget(QWidget):
         btn_continue.setCursor(Qt.CursorShape.PointingHandCursor)
 
         btn_import = QPushButton("")
-        btn_import.setIcon(QIcon("assets/search_icon.png"))
+        btn_import.setIcon(QIcon(sty_ico_import))
         btn_import.setIconSize(QSize(30, 30))
         btn_import.released.connect(self.import_location)
         btn_import.setStyleSheet(sty_btn_import)
         btn_import.setCursor(Qt.CursorShape.PointingHandCursor)
 
         lbl_title = QLabel("Examsoft RosterScraper", self)
-        lbl_title.setFont(QFont("Be Vietnam ExtraBold", 20))
+        lbl_title.setFont(QFont("Be Vietnam [ExtraBold]", 20, 800))
         lbl_title.setStyleSheet("padding-left: 1px; padding-right: 0px;")
 
         lbl_version = QLabel(txt_version, self)
@@ -243,14 +248,14 @@ class exp_tofolder_Widget(QWidget):
         btn_continue.setCursor(Qt.CursorShape.PointingHandCursor)
 
         btn_import = QPushButton("")
-        btn_import.setIcon(QIcon("assets/search_icon.png"))
+        btn_import.setIcon(QIcon(sty_ico_import))
         btn_import.setIconSize(QSize(30, 30))
         btn_import.released.connect(self.export_location)
         btn_import.setStyleSheet(sty_btn_import)
         btn_import.setCursor(Qt.CursorShape.PointingHandCursor)
 
         lbl_title = QLabel("Examsoft RosterScraper", self)
-        lbl_title.setFont(QFont("Be Vietnam ExtraBold", 20))
+        lbl_title.setFont(QFont("Be Vietnam [ExtraBold]", 20, 800))
         lbl_title.setStyleSheet("padding-left: 1px; padding-right: 0px;")
 
         lbl_version = QLabel(txt_version, self)
@@ -330,7 +335,7 @@ class exp_name_Widget(QWidget):
         btn_continue.setCursor(Qt.CursorShape.PointingHandCursor)
 
         lbl_title = QLabel("Examsoft RosterScraper", self)
-        lbl_title.setFont(QFont("Be Vietnam ExtraBold", 20))
+        lbl_title.setFont(QFont("Be Vietnam [ExtraBold]", 20, 800))
         lbl_title.setStyleSheet("padding-left: 1px; padding-right: 0px;")
 
         lbl_version = QLabel(txt_version, self)
@@ -393,6 +398,7 @@ class exp_name_Widget(QWidget):
 
         obj.set_exp_name(str(self.txtbox_location.text()))
         # this needs to be screen five
+        print(obj.get_inp_name())
 
         obj.run_scraper()
 
@@ -417,7 +423,7 @@ class preview_results_Widget(QWidget):
         btn_exit.setCursor(Qt.CursorShape.PointingHandCursor)
 
         lbl_title = QLabel("Examsoft RosterScraper", self)
-        lbl_title.setFont(QFont("Be Vietnam ExtraBold", 20))
+        lbl_title.setFont(QFont("Be Vietnam [ExtraBold]", 20, 800))
         lbl_title.setStyleSheet("padding-left: 1px; padding-right: 0px;")
 
         lbl_version = QLabel(txt_version, self)
@@ -496,12 +502,14 @@ class preview_results_Widget(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    fonts_name = [QFontDatabase.addApplicationFont("fonts/BeVietnam-ExtraBold.ttf"),
-                  QFontDatabase.addApplicationFont("fonts/BeVietnam-Regular.ttf"),
-                  QFontDatabase.addApplicationFont("fonts/BeVietnam-SemiBold.ttf")]
+    fonts_name = [QFontDatabase.addApplicationFont(os.path.join(basedir, "fonts", "BeVietnam-ExtraBold.ttf")),
+                  QFontDatabase.addApplicationFont(os.path.join(basedir, "fonts", "BeVietnam-Regular.ttf"))]
     for x in fonts_name:
         if x < 0:
             print("Error")
+
+    # families = QFontDatabase.applicationFontFamilies(fonts_name[2])
+    # print(families[0])
 
     # Create the QStackedWidget and add the two widgets to it
     stacked_widget = QStackedWidget()
