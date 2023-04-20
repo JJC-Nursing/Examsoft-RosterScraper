@@ -24,9 +24,9 @@ basedir = os.path.dirname(__file__)
 
 obj = esv.OfflineRS()
 
-txt_version = "v2.1"
+txt_version = "v2.0.02"
 
-txt_updatedate = "04.17.2023"
+txt_updatedate = "04.20.2023"
 
 txt_stuff = "script orig. written by Jefferson Cherrington" + "\n\n" + \
             "creates a CSV roster from a particularly formatted HTML file" + "\n" + \
