@@ -1,5 +1,5 @@
 # Examsoft-RosterScraper
-Objective: After manually downloading an HTML copy of their roster from Examsoft, a user can use this project (written in Python, powered by PyQt6) to output a roster file in an Excel-capable format.
+Objective: After manually downloading an HTML copy of their roster from Examsoft, a user can use this project (written in Python, powered by BeautifulSoup (bs4) and PyQt6) to output a roster file in an Excel-capable format.
 
 _(Disclaimer: the creator of this software is not liable for any damages that may occur as a result of utilizing this software. The software may not constitute the most up-to-date information.)_
 
