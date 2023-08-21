@@ -28,3 +28,5 @@ Before launching the RosterScraper, follow these steps to prepare the HTML corre
 ![sm_examsoft_mockup_mainpagefive_fixed](https://github.com/JJC-Nursing/Examsoft-RosterScraper/assets/103227374/f4013899-b9a5-4316-a643-ec86988d8bfa)
 
 After completing these steps, you are now ready to import the file into the RosterScraper.
+
+After running the RosterScraper, use this [guide](guide_usingyourfile.md) to learn how to use your new data.
